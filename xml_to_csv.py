@@ -15,6 +15,8 @@ CNN-LSTM implementation
     - for now, get the first image only
 > need to remove a subtring on image name
     - /hadoop/storage/radiology/extract/
+> the FINDINGS contain comma which troubles the CSV parser
+    - for now, replace comma by ;
 """
 
 # Clear output file and add heading
@@ -34,6 +36,7 @@ for i in range (1, NUM_FILES+1):
 
             # get caption
             finding = soup.find('AbstractText', Label="FINDINGS").get_text()
+            finding = finding.replace(",", ";") # to fit CSV
             if not finding:
                 continue # eliminate entries with empty findings
             

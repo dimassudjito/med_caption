@@ -134,17 +134,12 @@ if __name__ == "__main__":
     )
 
     loader, dataset = get_loader(
-        "flickr8k/images/", "flickr8k/captions.txt", transform=transform
+        "NLMCXR_png/", "captions.txt", transform=transform
     )
 
-    # for idx, (imgs, captions) in enumerate(loader):
-    #     print(imgs.shape)
-    #     print(captions.shape)
-
-    # DEBUG
     for idx, (imgs, captions) in enumerate(loader):
-        # print(imgs.shape)
+        print(imgs.shape)
         # print(imgs)
         print(captions.shape)
-        print(captions)
+        # print(captions)
         break
