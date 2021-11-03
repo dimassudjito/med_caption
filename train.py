@@ -28,8 +28,8 @@ def train():
 
     torch.backends.cudnn.benchmark = True
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    load_model = False
-    save_model = True
+    load_model = True
+    save_model = False
     train_CNN = False
 
     # Hyperparameters

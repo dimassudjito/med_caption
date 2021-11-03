@@ -13,16 +13,6 @@ def print_examples(model, device, dataset):
     )
 
     model.eval()
-    """
-    test_img1 = transform(Image.open("test_examples/dog.jpg").convert("RGB")).unsqueeze(
-        0
-    )
-    print("Example 1 CORRECT: Dog on a beach by the ocean")
-    print(
-        "Example 1 OUTPUT: "
-        + " ".join(model.caption_image(test_img1.to(device), dataset.vocab))
-    )
-    """
     test_img1 = transform(Image.open("test_examples/CXR1_1_IM-0001-3001.png").convert("RGB")).unsqueeze(
         0
     )
