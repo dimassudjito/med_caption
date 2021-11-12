@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import json
 NUM_FILES = 3999
 INSTRUCTIONS = ["pneumonia", "edema", "focal consolidation", "pleural effusion", "pneumothorax"]
 
@@ -17,7 +18,7 @@ instruction_counter = dict()
 for instruction in INSTRUCTIONS:
     instruction_counter[instruction] = 0
 
-# Read the XML file
+# Read the XML file and build the dictionary
 for i in range (1, NUM_FILES+1):
     temp_dict = dict()
 
@@ -71,7 +72,11 @@ for i in range (1, NUM_FILES+1):
     except:
         pass
 
+# write output file
+json.dump(output_dict, outfile)
+# print("length: " + str(len(output_dict))) # DEBUG
+# print("instruction counter: " + str(instruction_counter)) # DEBUG
+
+
 # Close output file
-print("length: " + str(len(output_dict)))
-print(instruction_counter)
 outfile.close()
