@@ -17,6 +17,7 @@ output_dict = dict()
 instruction_counter = dict()
 for instruction in INSTRUCTIONS:
     instruction_counter[instruction] = 0
+row = 0
 
 # Read the XML file and build the dictionary
 for i in range (1, NUM_FILES+1):
@@ -67,8 +68,9 @@ for i in range (1, NUM_FILES+1):
             temp_dict["image"] = image
 
             # add to output dictionary
-            output_dict[i] = temp_dict
+            output_dict[str(row)] = temp_dict
             instruction_counter[temp_dict["instruction"]] += 1
+            row += 1
     except:
         pass
 

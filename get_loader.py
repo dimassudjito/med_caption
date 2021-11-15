@@ -61,7 +61,7 @@ class Vocabulary:
 class FlickrDataset(Dataset):
     def __init__(self, root_dir, captions_file, transform=None, freq_threshold=5):
         self.root_dir = root_dir
-        self.df = pd.read_json(captions_file)
+        self.df = pd.read_json(captions_file, orient='index')
         self.transform = transform
 
         # Get img, caption columns
@@ -133,16 +133,16 @@ if __name__ == "__main__":
         [transforms.Resize((224, 224)), transforms.ToTensor(),]
     )
 
-    df = pd.read_json("captions.json")
-    print(df)
+    # df = pd.read_json("captions.json", orient='index')
+    # print(df['image'])
 
-    # loader, dataset = get_loader(
-    #     "NLMCXR_png/", "captions.txt", transform=transform
-    # )
+    loader, dataset = get_loader(
+        "NLMCXR_png/", "captions.json", transform=transform
+    )
 
-    # for idx, (imgs, captions) in enumerate(loader):
-    #     print(imgs.shape)
-    #     # print(imgs)
-    #     print(captions.shape)
-    #     # print(captions)
-    #     break
+    for idx, (imgs, captions) in enumerate(loader):
+        print(imgs.shape)
+        # print(imgs)
+        print(captions.shape)
+        # print(captions)
+        break
