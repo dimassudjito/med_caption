@@ -10,7 +10,7 @@ image file, target sentence, masked paragraph, and instructions
 """
 
 # Clear output file and prepare output dictionary
-outfile = open("captions.txt", "w")
+outfile = open("captions.json", "w")
 output_dict = dict()
 
 # to keep track number of each instruction

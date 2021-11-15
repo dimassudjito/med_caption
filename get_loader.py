@@ -61,12 +61,12 @@ class Vocabulary:
 class FlickrDataset(Dataset):
     def __init__(self, root_dir, captions_file, transform=None, freq_threshold=5):
         self.root_dir = root_dir
-        self.df = pd.read_csv(captions_file)
+        self.df = pd.read_json(captions_file)
         self.transform = transform
 
         # Get img, caption columns
         self.imgs = self.df["image"]
-        self.captions = self.df["caption"]
+        self.captions = self.df["target"]
 
         # Initialize vocabulary and build vocab
         self.vocab = Vocabulary(freq_threshold)
@@ -133,22 +133,16 @@ if __name__ == "__main__":
         [transforms.Resize((224, 224)), transforms.ToTensor(),]
     )
 
-    loader, dataset = get_loader(
-        "flickr8k/images/", "flickr8k/captions.txt", transform=transform
-    )
+    df = pd.read_json("captions.json")
+    print(df)
+
+    # loader, dataset = get_loader(
+    #     "NLMCXR_png/", "captions.txt", transform=transform
+    # )
 
     # for idx, (imgs, captions) in enumerate(loader):
     #     print(imgs.shape)
-    #     print(captions.shape)
-
-    # DEBUG
-    # for idx, (imgs, captions) in enumerate(loader):
-    #     # print(imgs.shape)
     #     # print(imgs)
     #     print(captions.shape)
-    #     print(captions)
+    #     # print(captions)
     #     break
-    for idx, (imgs, captions) in enumerate(dataset):
-        print(imgs)
-        print(captions)
-        break
