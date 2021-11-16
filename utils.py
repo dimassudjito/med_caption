@@ -40,6 +40,15 @@ def print_examples(model, device, dataset):
         + " ".join(model.caption_image(test_img3.to(device), dataset.vocab))
     )
     # --------------------------
+    test_img4 = transform(Image.open("NLMCXR_png/CXR14_IM-0256-1001.png").convert("RGB")).unsqueeze(
+        0
+    )
+    print("Example 4 CORRECT: scattered chronic appearing irregular interstitial markings, no typical findings of pulmonary edema")
+    print(
+        "Example 4 OUTPUT: "
+        + " ".join(model.caption_image(test_img4.to(device), dataset.vocab))
+    )
+    # --------------------------
     model.train()
 
 

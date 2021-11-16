@@ -28,7 +28,7 @@ def train():
 
     torch.backends.cudnn.benchmark = True
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    load_model = False
+    load_model = True
     save_model = True
     train_CNN = False
 
@@ -38,7 +38,7 @@ def train():
     vocab_size = len(dataset.vocab)
     num_layers = 1
     learning_rate = 3e-4
-    num_epochs = 50
+    num_epochs = 0
 
     # for tensorboard
     writer = SummaryWriter("runs/flickr")
