@@ -67,10 +67,14 @@ class FlickrDataset(Dataset):
         # Get img, caption columns
         self.imgs = self.df["image"]
         self.captions = self.df["target"]
+        self.masked = self.df["masked"]
 
         # Initialize vocabulary and build vocab
         self.vocab = Vocabulary(freq_threshold)
-        self.vocab.build_vocabulary(self.captions.tolist())
+        # Append target and masked sentence to build complete vocab
+        vocab_list = self.captions.tolist()
+        vocab_list.extend(self.masked.tolist())
+        self.vocab.build_vocabulary(vocab_list)
 
     def __len__(self):
         return len(self.df)
