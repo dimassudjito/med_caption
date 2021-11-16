@@ -68,6 +68,7 @@ class FlickrDataset(Dataset):
         self.imgs = self.df["image"]
         self.captions = self.df["target"]
         self.maskeds = self.df["masked"]
+        self.instructions = self.df["instruction"]
 
         # Initialize vocabulary and build vocab
         self.vocab = Vocabulary(freq_threshold)
@@ -82,6 +83,7 @@ class FlickrDataset(Dataset):
     def __getitem__(self, index):
         caption = self.captions[index]
         masked = self.maskeds[index]
+        instruction = self.instructions[index]
         img_id = self.imgs[index]
         img = Image.open(os.path.join(self.root_dir, img_id)).convert("RGB")
 
@@ -96,7 +98,9 @@ class FlickrDataset(Dataset):
         numericalized_masked += self.vocab.numericalize(masked)
         numericalized_masked.append(self.vocab.stoi["<EOS>"])
 
-        return img, torch.tensor(numericalized_caption), torch.tensor(numericalized_masked)
+        numericalized_instruction = self.vocab.numericalize(instruction)
+
+        return img, torch.tensor(numericalized_caption), torch.tensor(numericalized_masked), torch.tensor(numericalized_instruction)
 
 
 class MyCollate:
@@ -110,9 +114,11 @@ class MyCollate:
         targets = pad_sequence(targets, batch_first=False, padding_value=self.pad_idx)
         maskeds = [item[2] for item in batch]
         maskeds = pad_sequence(maskeds, batch_first=False, padding_value=self.pad_idx)
+        instructions = [item[3] for item in batch]
+        instructions = pad_sequence(instructions, batch_first=False, padding_value=self.pad_idx)
 
 
-        return imgs, targets, maskeds
+        return imgs, targets, maskeds, instructions
 
 
 def get_loader(
@@ -149,11 +155,13 @@ if __name__ == "__main__":
         "NLMCXR_png/", "captions.json", transform=transform
     )
 
-    for idx, (imgs, captions, maskeds) in enumerate(loader):
-        # print(imgs.shape)
-        print(imgs)
-        # print(captions.shape)
-        print(captions)
-        # print(maskeds.shape)
-        print(maskeds)
+    for idx, (imgs, captions, maskeds, instructions) in enumerate(loader):
+        print(imgs.shape)
+        # print(imgs)
+        print(captions.shape)
+        # print(captions)
+        print(maskeds.shape)
+        # print(maskeds)
+        print(instructions.shape)
+        # print(instructions)
         break
