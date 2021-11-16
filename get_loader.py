@@ -67,13 +67,13 @@ class FlickrDataset(Dataset):
         # Get img, caption columns
         self.imgs = self.df["image"]
         self.captions = self.df["target"]
-        self.masked = self.df["masked"]
+        self.maskeds = self.df["masked"]
 
         # Initialize vocabulary and build vocab
         self.vocab = Vocabulary(freq_threshold)
         # Append target and masked sentence to build complete vocab
         vocab_list = self.captions.tolist()
-        vocab_list.extend(self.masked.tolist())
+        vocab_list.extend(self.maskeds.tolist())
         self.vocab.build_vocabulary(vocab_list)
 
     def __len__(self):
@@ -81,6 +81,7 @@ class FlickrDataset(Dataset):
 
     def __getitem__(self, index):
         caption = self.captions[index]
+        masked = self.maskeds[index]
         img_id = self.imgs[index]
         img = Image.open(os.path.join(self.root_dir, img_id)).convert("RGB")
 
@@ -91,7 +92,11 @@ class FlickrDataset(Dataset):
         numericalized_caption += self.vocab.numericalize(caption)
         numericalized_caption.append(self.vocab.stoi["<EOS>"])
 
-        return img, torch.tensor(numericalized_caption)
+        numericalized_masked = [self.vocab.stoi["<SOS>"]]
+        numericalized_masked += self.vocab.numericalize(masked)
+        numericalized_masked.append(self.vocab.stoi["<EOS>"])
+
+        return img, torch.tensor(numericalized_caption), torch.tensor(numericalized_masked)
 
 
 class MyCollate:
@@ -103,8 +108,11 @@ class MyCollate:
         imgs = torch.cat(imgs, dim=0)
         targets = [item[1] for item in batch]
         targets = pad_sequence(targets, batch_first=False, padding_value=self.pad_idx)
+        maskeds = [item[2] for item in batch]
+        maskeds = pad_sequence(maskeds, batch_first=False, padding_value=self.pad_idx)
 
-        return imgs, targets
+
+        return imgs, targets, maskeds
 
 
 def get_loader(
@@ -137,16 +145,15 @@ if __name__ == "__main__":
         [transforms.Resize((224, 224)), transforms.ToTensor(),]
     )
 
-    # df = pd.read_json("captions.json", orient='index')
-    # print(df['image'])
-
     loader, dataset = get_loader(
         "NLMCXR_png/", "captions.json", transform=transform
     )
 
-    for idx, (imgs, captions) in enumerate(loader):
-        print(imgs.shape)
-        # print(imgs)
-        print(captions.shape)
-        # print(captions)
+    for idx, (imgs, captions, maskeds) in enumerate(loader):
+        # print(imgs.shape)
+        print(imgs)
+        # print(captions.shape)
+        print(captions)
+        # print(maskeds.shape)
+        print(maskeds)
         break
