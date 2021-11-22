@@ -28,7 +28,7 @@ def train():
 
     torch.backends.cudnn.benchmark = True
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    load_model = True
+    load_model = False
     save_model = True
     train_CNN = False
 
@@ -38,7 +38,7 @@ def train():
     vocab_size = len(dataset.vocab)
     num_layers = 1
     learning_rate = 3e-4
-    num_epochs = 0
+    num_epochs = 1
 
     # for tensorboard
     writer = SummaryWriter("runs/flickr")
@@ -73,13 +73,14 @@ def train():
             }
             save_checkpoint(checkpoint)
 
-        for idx, (imgs, captions) in tqdm(
+        for idx, (imgs, captions, maskeds, instructions) in tqdm(
             enumerate(train_loader), total=len(train_loader), leave=False
         ):
             imgs = imgs.to(device)
             captions = captions.to(device)
+            maskeds = maskeds.to(device)
 
-            outputs = model(imgs, captions[:-1])
+            outputs = model(imgs, captions[:-1], maskeds[:-1])
             loss = criterion(
                 outputs.reshape(-1, outputs.shape[2]), captions.reshape(-1)
             )
