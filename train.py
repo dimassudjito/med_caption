@@ -81,6 +81,8 @@ def train():
             maskeds = maskeds.to(device)
 
             outputs = model(imgs, captions[:-1], maskeds[:-1])
+            print("param1: ", outputs.reshape(-1, outputs.shape[2]).shape) # DEBUG
+            print("param2: ", captions.reshape(-1).shape) # DEBUG
             loss = criterion(
                 outputs.reshape(-1, outputs.shape[2]), captions.reshape(-1)
             )

@@ -156,12 +156,12 @@ if __name__ == "__main__":
     )
 
     for idx, (imgs, captions, maskeds, instructions) in enumerate(loader):
-        print(imgs.shape)
+        # print(imgs.shape)
         # print(imgs)
-        print(captions.shape)
+        # print(captions.shape)
         # print(captions)
-        print(maskeds.shape)
-        # print(maskeds)
-        print(instructions.shape)
+        # print(maskeds.shape)
+        print(maskeds)
+        # print(instructions.shape)
         # print(instructions)
         break

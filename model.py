@@ -41,9 +41,17 @@ class DecoderRNN(nn.Module):
         self.linear = nn.Linear(hidden_size, vocab_size)
         self.dropout = nn.Dropout(0.5)
 
-    def forward(self, features, captions):
+    def forward(self, features_images, captions, features_maskeds):
         embeddings = self.dropout(self.embed(captions))
-        embeddings = torch.cat((features.unsqueeze(0), embeddings), dim=0)
+        print("shape of embeddings (before): ", embeddings.shape) # DEBUG
+        print("shape of features_images: ", features_images.unsqueeze(0).shape) # DEBUG
+        embeddings = torch.cat((features_images.unsqueeze(0), embeddings), dim=0)
+        print("shape of embeddings (after): ", embeddings.shape) # DEBUG
+        print("shape of features_maskeds: ", features_maskeds.shape) # DEBUG
+        embedding_maskeds = self.dropout(self.embed(captions))
+        print("shape of embedding_maskeds: ", embedding_maskeds.shape) # DEBUG
+        embeddings = torch.cat((embedding_maskeds, embeddings), dim=0)
+        print("shape of embeddings (after #2): ", embeddings.shape) # DEBUG
         hiddens, _ = self.lstm(embeddings)
         outputs = self.linear(hiddens)
         return outputs
@@ -57,9 +65,9 @@ class CNNtoRNN(nn.Module):
         self.decoderRNN = DecoderRNN(embed_size, hidden_size, vocab_size, num_layers)
 
     def forward(self, images, captions, maskeds):
-        features = self.encoderCNN(images)
+        features_images = self.encoderCNN(images)
         features_maskeds = self.encoderRNN(maskeds)
-        outputs = self.decoderRNN(features, captions)
+        outputs = self.decoderRNN(features_images, captions, features_maskeds)
         return outputs
 
     def caption_image(self, image, vocabulary, max_length=50):
