@@ -79,9 +79,10 @@ def train():
             imgs = imgs.to(device)
             captions = captions.to(device)
             maskeds = maskeds.to(device)
+            instructions = instructions.to(device)
             print("original shape of captions: ", captions.shape)
 
-            outputs = model(imgs, captions[:-2], maskeds)
+            outputs = model(imgs, captions[:-3], maskeds, instructions)
             print("criterion() param1: ", outputs.reshape(-1, outputs.shape[2]).shape) # DEBUG
             print("criterion() param2: ", captions.reshape(-1).shape) # DEBUG
             loss = criterion(

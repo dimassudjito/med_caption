@@ -41,7 +41,7 @@ class DecoderRNN(nn.Module):
         self.linear = nn.Linear(hidden_size, vocab_size)
         self.dropout = nn.Dropout(0.5)
 
-    def forward(self, features_images, captions, features_maskeds):
+    def forward(self, features_images, captions, features_maskeds, features_instructions):
         print("shape of captions: ", captions.shape) # DEBUG
         embeddings = self.dropout(self.embed(captions))
         print("shape of embeddings (before): ", embeddings.shape) # DEBUG
@@ -51,6 +51,10 @@ class DecoderRNN(nn.Module):
         features_maskeds = torch.narrow(features_maskeds, 2, 0, 256)
         print("shape of features_maskeds (last only): ", features_maskeds.shape) # DEBUG        
         embeddings = torch.cat((features_maskeds, embeddings), dim=0)
+        features_instructions = torch.narrow(features_instructions, 0, -1, 1)
+        features_instructions = torch.narrow(features_instructions, 2, 0, 256)
+        print("shape of features_instructions (last only): ", features_instructions.shape) # DEBUG        
+        embeddings = torch.cat((features_instructions, embeddings), dim=0)
         print("shape of embeddings (after): ", embeddings.shape) # DEBUG
         hiddens, _ = self.lstm(embeddings)
         outputs = self.linear(hiddens)
@@ -64,10 +68,11 @@ class CNNtoRNN(nn.Module):
         self.encoderRNN = EncoderRNN(embed_size, hidden_size, vocab_size, num_layers)
         self.decoderRNN = DecoderRNN(embed_size, hidden_size, vocab_size, num_layers)
 
-    def forward(self, images, captions, maskeds):
+    def forward(self, images, captions, maskeds, instructions):
         features_images = self.encoderCNN(images)
         features_maskeds = self.encoderRNN(maskeds)
-        outputs = self.decoderRNN(features_images, captions, features_maskeds)
+        features_instructions = self.encoderRNN(instructions)
+        outputs = self.decoderRNN(features_images, captions, features_maskeds, features_instructions)
         return outputs
 
     def caption_image(self, image, vocabulary, max_length=50):
