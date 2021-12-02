@@ -47,10 +47,10 @@ class DecoderRNN(nn.Module):
         print("shape of embeddings (before): ", embeddings.shape) # DEBUG
         print("shape of features_images: ", features_images.unsqueeze(0).shape) # DEBUG
         embeddings = torch.cat((features_images.unsqueeze(0), embeddings), dim=0)
-        embedding_maskeds = self.dropout(self.embed(captions))
-        embedding_maskeds = torch.narrow(embedding_maskeds, 0, -1, 1)
-        print("shape of features_maskeds (last only): ", embedding_maskeds.shape) # DEBUG        
-        embeddings = torch.cat((embedding_maskeds, embeddings), dim=0)
+        features_maskeds = torch.narrow(features_maskeds, 0, -1, 1)
+        features_maskeds = torch.narrow(features_maskeds, 2, 0, 256)
+        print("shape of features_maskeds (last only): ", features_maskeds.shape) # DEBUG        
+        embeddings = torch.cat((features_maskeds, embeddings), dim=0)
         print("shape of embeddings (after): ", embeddings.shape) # DEBUG
         hiddens, _ = self.lstm(embeddings)
         outputs = self.linear(hiddens)
